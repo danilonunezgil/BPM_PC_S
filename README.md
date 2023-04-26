@@ -10,7 +10,7 @@ Program that consumes StackOverflow API about questions/answers related to BPM.
 5. Instalar Python en cualquier versión 
 6. Instalar las librerías json y request de ser necesario:
 
-   pip install request
+   pip install request<br>
    pip install json
    
 7. Ejecuta el programa (en este momento no está funcional).
