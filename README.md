@@ -35,8 +35,8 @@ https://stackapps.com/apps/oauth/view/26090
 
 
 # Limitaciones del uso de la API:
-https://api.stackexchange.com/docs/throttle
-Máximo 30 peticiones por segundo 
-Máximo 10.000 peticiones por día
-En caso de superar la máximas por día, saldrá un error HTTP 429.
+https://api.stackexchange.com/docs/throttle<br>
+Máximo 30 peticiones por segundo<br>
+Máximo 10.000 peticiones por día<br>
+En caso de superar la máximas por día, saldrá un error HTTP 429.<br>
 Se renueva cada media noche dado el caso se haya superado el límite diario.
