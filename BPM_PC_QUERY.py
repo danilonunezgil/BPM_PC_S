@@ -22,7 +22,7 @@ params = {
     "order": "desc",
     "sort": "votes",
     "site": "stackoverflow",
-    "intitle": "camunda",
+    "intitle": "jbpm",
 }
 
 questions = []
@@ -46,7 +46,8 @@ while True:
         break
 
 for question in questions:
-    topic = params['intitle']
+    id_discussion = question["question_id"]
+    topic = params["intitle"]
     title = question["title"]
     link = question["link"]
     score = question["score"]
@@ -56,8 +57,8 @@ for question in questions:
     tags = ", ".join(question["tags"])
     
     if(score >= 0):
-        insert_query = "INSERT INTO pc_stackoverflow (topic, title, link, score, answer_count, view_count, creation_date, tags) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-        cursor.execute(insert_query, (topic, title, link, score, answer_count, view_count, creation_date, tags))
+        insert_query = "INSERT INTO BPM_PC_QUERY (id_discusion,topic, title, link, score, answer_count, view_count, creation_date, tags) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+        cursor.execute(insert_query, (id_discussion,topic, title, link, score, answer_count, view_count, creation_date, tags))
         print(f"Se ha insertado la siguiente discusión en la base de datos:\nTema: {topic}\nTítulo: {title}\nLink: {link}\nNum. Votos: {score}\nNum. Respuestas: {answer_count}\nNum. Vistas: {view_count}\nFecha de creación: {creation_date}\nTags: {tags}\n{'-'*50}")
     else:
         print(f"No se ha insertado la siguiente discusión dado su votación negativa:\nTema: {topic}\nTítulo: {title}\nLink: {link}\nNum. Votos: {score}\nNum. Respuestas: {answer_count}\nNum. Vistas: {view_count}\nFecha de creación: {creation_date}\nTags: {tags}\n{'-'*50}")
