@@ -1,7 +1,7 @@
 # BPM_PC_S
-Nombre: BPM_PC_QUERY
-Descripción: obtiene datos sobre plataformas de BPMN consumiendo una API de StacoOverflow.
-Desarrollado por: DANNO_NZ
+Nombre: BPM_PC_QUERY<br>
+Descripción: obtiene datos sobre plataformas de BPMN consumiendo una API de StacoOverflow.<br>
+Desarrollado por: DANNO_NZ<br>
 https://stackapps.com/apps/oauth/view/26090
 
 # Para ejecutar el programa se necesita:
