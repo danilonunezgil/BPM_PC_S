@@ -1,14 +1,28 @@
+import argparse
 import requests
 import time
 from datetime import datetime
 import psycopg2
 
+# Crear el objeto ArgumentParser
+parser = argparse.ArgumentParser(description='Obtener y almacenar preguntas de Stack Overflow')
+
+# Agregar los argumentos
+parser.add_argument('-k', '--key', required=True, help='Clave de la API de StackExchange')
+parser.add_argument('-i', '--intitle', required=True, help='Título de búsqueda en StackOverflow')
+parser.add_argument('-d', '--database', required=True, help='Nombre de la base de datos')
+parser.add_argument('-u', '--user', required=True, help='Usuario de la base de datos')
+parser.add_argument('-p', '--password', required=True, help='Contraseña de la base de datos')
+
+# Parsear los argumentos de la línea de comandos
+args = parser.parse_args()
+
 # Define los parámetros de conexión a la base de datos
 conn_params = {
-    "host":"localhost",
-    "database":"BPM_PC_QUERY",
-    "user": "postgres",
-    "password":"4032"
+    "host": "localhost",
+    "database": args.database,
+    "user": args.user,
+    "password": args.password
 }
 
 # Establece una conexión con la base de datos
@@ -18,11 +32,9 @@ cursor = conn.cursor()
 url = "https://api.stackexchange.com/2.3/search"
 
 params = {
-    "key": "ahhBNdmxDJ5zP2dxaJvCHw((",
-    "order": "desc",
-    "sort": "votes",
+    "key": args.key,
     "site": "stackoverflow",
-    "intitle": "jbpm",
+    "intitle": args.intitle,
 }
 
 questions = []
@@ -40,13 +52,28 @@ while True:
         page += 1
         if page % 30 == 0:
             print("esperando")
-            time.sleep(1) # Espera 1 segundo después de cada 30 solicitudes
+            time.sleep(1)  # Espera 1 segundo después de cada 30 solicitudes
     else:
         print("Error al realizar la solicitud HTTP:", response.status_code)
         break
 
+# Consulta los IDs de discusión existentes en la base de datos
+select_query = "SELECT id_discussion FROM BPM_PC_QUERY"
+cursor.execute(select_query)
+existing_ids = set(row[0] for row in cursor.fetchall())
+
+inserted_count = 0
+neg_votes_omitted_count = 0
+existing_omitted_count = 0
+
 for question in questions:
     id_discussion = question["question_id"]
+
+    # Verifica si el ID de discusión ya existe en la base de datos
+    if id_discussion in existing_ids:
+        existing_omitted_count += 1
+        continue
+
     topic = params["intitle"]
     title = question["title"]
     link = question["link"]
@@ -55,14 +82,14 @@ for question in questions:
     view_count = question["view_count"]
     creation_date = datetime.fromtimestamp(question["creation_date"]).strftime("%Y-%m-%d")
     tags = ", ".join(question["tags"])
-    
-    if(score >= 0):
+
+    if score >= 0:
         insert_query = "INSERT INTO BPM_PC_QUERY (id_discussion,topic, title, link, score, answer_count, view_count, creation_date, tags) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        cursor.execute(insert_query, (id_discussion,topic, title, link, score, answer_count, view_count, creation_date, tags))
-        print(f"Se ha insertado la siguiente discusión en la base de datos:\nID_Discusión: {id_discussion}\nTema: {topic}\nTítulo: {title}\nLink: {link}\nNum. Votos: {score}\nNum. Respuestas: {answer_count}\nNum. Vistas: {view_count}\nFecha de creación: {creation_date}\nTags: {tags}\n{'-'*50}")
-        conn.commit()
+        cursor.execute(insert_query, (id_discussion, topic, title, link, score, answer_count, view_count, creation_date, tags))
+        inserted_count += 1
+        existing_ids.add(id_discussion)
     else:
-        print(f"No se ha insertado la siguiente discusión dado su votación negativa:\nID_Discusión: {id_discussion}\nTema: {topic}\nTítulo: {title}\nLink: {link}\nNum. Votos: {score}\nNum. Respuestas: {answer_count}\nNum. Vistas: {view_count}\nFecha de creación: {creation_date}\nTags: {tags}\n{'-'*50}")
+        neg_votes_omitted_count += 1
 
 # Confirma los cambios en la base de datos
 conn.commit()
@@ -71,4 +98,9 @@ conn.commit()
 cursor.close()
 conn.close()
 
-print("Total discusiones encontradas: ", len(questions))
+total_questions = len(questions)
+print("Num pages: ",)
+print("Total discusiones encontradas:", total_questions)
+print("Total discusiones insertadas en BD:", inserted_count)
+print("Total discusiones omitidas por votos negativos:", neg_votes_omitted_count)
+print("Total discusiones omitidas porque ya existían en la base de datos:", existing_omitted_count)
