@@ -1,5 +1,7 @@
 # BPM_PC_S
-Program that consumes StackOverflow API about questions/answers related to BPM.
+Nombre: BPM_PC_QUERY
+Descripción: obtiene datos sobre plataformas de BPMN consumiendo una API de StacoOverflow.
+Desarrollado por: DANNO_NZ
 https://stackapps.com/apps/oauth/view/26090
 
 # Para ejecutar el programa se necesita:
@@ -18,21 +20,23 @@ https://stackapps.com/apps/oauth/view/26090
    pip install psycopg2-binary (para conectarse y realizar operaciones con PostgreSQL)
    
 7. Instalar PostgreSQL https://www.postgresql.org/download/windows/
-8. Con la ayuda de pgAdmin 4, crear una base de datos llamada pc (abreviatura de platform comparison)
+8. Con la ayuda de pgAdmin 4, crear una base de datos llamada BPM_PC_QUERY
 9. En esa misma BD, crear una tabla con la siguiente estructura:
    
-   CREATE TABLE PC (
-   id SERIAL PRIMARY KEY,
-   title VARCHAR(255),
-   link VARCHAR(255),
-   score INTEGER,
-   answer_count INTEGER,
-   view_count INTEGER
-   );
+   CREATE TABLE BPM_PC_QUERY (<br>
+      id_discussion SERIAL PRIMARY KEY,<br>
+      topic VARCHAR(25),<br>
+      title VARCHAR(255),<br>
+      link VARCHAR(255),<br>
+      score INTEGER,<br>
+      answer_count INTEGER,<br>
+      view_count INTEGER,<br>
+      creation_date DATE,<br>
+      tags VARCHAR(255)<br>
+   );<br>
    
-11. Ejecuta el programa (en este momento se encuentra en desarrollo).
+10. Ejecuta el programa (en este momento se encuentra en desarrollo).
     
-
 
 # Limitaciones del uso de la API:
 https://api.stackexchange.com/docs/throttle<br>

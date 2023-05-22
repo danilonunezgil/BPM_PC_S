@@ -6,7 +6,7 @@ import psycopg2
 # Define los parámetros de conexión a la base de datos
 conn_params = {
     "host":"localhost",
-    "database":"pc_stackoverflow",
+    "database":"BPM_PC_QUERY",
     "user": "postgres",
     "password":"4032"
 }
@@ -57,11 +57,12 @@ for question in questions:
     tags = ", ".join(question["tags"])
     
     if(score >= 0):
-        insert_query = "INSERT INTO BPM_PC_QUERY (id_discusion,topic, title, link, score, answer_count, view_count, creation_date, tags) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+        insert_query = "INSERT INTO BPM_PC_QUERY (id_discussion,topic, title, link, score, answer_count, view_count, creation_date, tags) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
         cursor.execute(insert_query, (id_discussion,topic, title, link, score, answer_count, view_count, creation_date, tags))
-        print(f"Se ha insertado la siguiente discusión en la base de datos:\nTema: {topic}\nTítulo: {title}\nLink: {link}\nNum. Votos: {score}\nNum. Respuestas: {answer_count}\nNum. Vistas: {view_count}\nFecha de creación: {creation_date}\nTags: {tags}\n{'-'*50}")
+        print(f"Se ha insertado la siguiente discusión en la base de datos:\nID_Discusión: {id_discussion}\nTema: {topic}\nTítulo: {title}\nLink: {link}\nNum. Votos: {score}\nNum. Respuestas: {answer_count}\nNum. Vistas: {view_count}\nFecha de creación: {creation_date}\nTags: {tags}\n{'-'*50}")
+        conn.commit()
     else:
-        print(f"No se ha insertado la siguiente discusión dado su votación negativa:\nTema: {topic}\nTítulo: {title}\nLink: {link}\nNum. Votos: {score}\nNum. Respuestas: {answer_count}\nNum. Vistas: {view_count}\nFecha de creación: {creation_date}\nTags: {tags}\n{'-'*50}")
+        print(f"No se ha insertado la siguiente discusión dado su votación negativa:\nID_Discusión: {id_discussion}\nTema: {topic}\nTítulo: {title}\nLink: {link}\nNum. Votos: {score}\nNum. Respuestas: {answer_count}\nNum. Vistas: {view_count}\nFecha de creación: {creation_date}\nTags: {tags}\n{'-'*50}")
 
 # Confirma los cambios en la base de datos
 conn.commit()
