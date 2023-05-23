@@ -15,11 +15,11 @@ https://stackapps.com/apps/oauth/view/26090
 7. Instalar Python en cualquier versión 
 8. Instalar los siguientes módulos:
 
-   pip install request (para hacer solicitudes HTTP)<br>
+   pip install requests (para hacer solicitudes HTTP)<br>
    pip install json (para trabajar con el formato JSON)<br>
    pip install psycopg2-binary (para conectarse y realizar operaciones con PostgreSQL)
    
-7. Instalar PostgreSQL https://www.postgresql.org/download/windows/
+7. Instalar PostgreSQL https://www.postgresql.org/download/windows/ (versión estable o última versión)
 8. Con la ayuda de pgAdmin 4, crear una base de datos llamada BPM_PC_QUERY
 9. En esa misma BD, crear una tabla con la siguiente estructura:
    
