@@ -11,17 +11,15 @@ https://stackapps.com/apps/oauth/view/26090
 3. Obtener un cliente ID y una clave secreta de autenticación OAuth en Stack Overflow (si ya la tiene omita los pasos 1,2,3)
 4. Instalar el manejador de versiones GIT
 5. Clonar el repositorio con: git clone https://github.com/danilonunezgil/BPM_PC_S.git
-6. Reemplazar las credenciales en el código
-7. Instalar Python en cualquier versión 
-8. Instalar los siguientes módulos:
+6. Instalar Python en cualquier versión 
+7. Instalar los siguientes módulos:
 
    pip install requests (para hacer solicitudes HTTP)<br>
-   pip install json (para trabajar con el formato JSON)<br>
    pip install psycopg2-binary (para conectarse y realizar operaciones con PostgreSQL)
    
-7. Instalar PostgreSQL https://www.postgresql.org/download/windows/ (versión estable o última versión)
-8. Con la ayuda de pgAdmin 4, crear una base de datos llamada BPM_PC_QUERY
-9. En esa misma BD, crear una tabla con la siguiente estructura:
+8. Instalar PostgreSQL https://www.postgresql.org/download/windows/ (versión estable o última versión)
+9. Con la ayuda de pgAdmin 4, crear una base de datos llamada BPM_PC_QUERY
+10. En esa misma BD, mediante el uso del script llamado BPM_PC_Query.sql crear la siguiente tabla:
    
    CREATE TABLE BPM_PC_QUERY (<br>
       id_discussion SERIAL PRIMARY KEY,<br>
@@ -35,7 +33,7 @@ https://stackapps.com/apps/oauth/view/26090
       tags VARCHAR(255)<br>
    );<br>
    
-10. Ejecuta el programa (en este momento se encuentra en desarrollo):
+11. Ejecuta el programa (en este momento se encuentra en desarrollo):
 
    python BPM_PC_QUERY.py -k "keyAPI" -i "NombreBusqueda" -d "NombreBD" -u "postgres" -p "claveDB" 
     
