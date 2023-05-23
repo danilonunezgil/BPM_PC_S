@@ -8,7 +8,7 @@ https://stackapps.com/apps/oauth/view/26090
 
 1. Realizar el registro en https://stackapps.com/users/login
 2. Registrar la aplicación para obtener las credenciales que permiten usar la API de StackOverflow https://stackapps.com/apps/oauth/register
-3. Obtener un cliente ID y una clave secreta de autenticación OAuth en Stack Overflow
+3. Obtener un cliente ID y una clave secreta de autenticación OAuth en Stack Overflow (si ya la tiene omita los pasos 1,2,3)
 4. Instalar el manejador de versiones GIT
 5. Clonar el repositorio con: git clone https://github.com/danilonunezgil/BPM_PC_S.git
 6. Reemplazar las credenciales en el código
@@ -35,7 +35,9 @@ https://stackapps.com/apps/oauth/view/26090
       tags VARCHAR(255)<br>
    );<br>
    
-10. Ejecuta el programa (en este momento se encuentra en desarrollo).
+10. Ejecuta el programa (en este momento se encuentra en desarrollo):
+
+   python BPM_PC_QUERY.py -k "keyAPI" -i "NombreBusqueda" -d "NombreBD" -u "postgres" -p "claveDB" 
     
 
 # Limitaciones del uso de la API:
