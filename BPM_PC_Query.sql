@@ -10,7 +10,8 @@ CREATE TABLE BPM_PC_QUERY (
    tags VARCHAR(255)
 );
 select * from BPM_PC_QUERY;
-select *  from BPM_PC_QUERY where topic = 'jbpm';
+select *  from BPM_PC_QUERY where topic = 'bonitasoft';
+select * from bpm_pc_query where title ilike '%bonitasoft%';
 select count(*) num_camunda from BPM_PC_QUERY where topic = 'jbpm';
 truncate table BPM_PC_QUERY;
 drop table BPM_PC_QUERY;
