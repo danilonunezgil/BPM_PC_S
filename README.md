@@ -1,4 +1,4 @@
-# BPM_PC_S
+# INFORMACIÓN DEL PROGRAMA
 Nombre: BPM_PC_QUERY<br>
 Descripción: obtiene datos sobre plataformas de BPMN consumiendo una API de StacoOverflow.<br>
 Desarrollado por: DANNO_NZ<br>
