@@ -1,11 +1,12 @@
 import argparse
 import requests
 import time
-from datetime import datetime
 import psycopg2
+from datetime import datetime
+
 
 # Crear el objeto ArgumentParser
-parser = argparse.ArgumentParser(description='Obtener y almacenar preguntas de Stack Overflow')
+parser = argparse.ArgumentParser(description='Obtener y almacenar preguntas de StackOverflow')
 
 # Agregar los argumentos
 parser.add_argument('-k', '--key', required=True, help='Clave de la API de StackExchange')
@@ -66,6 +67,9 @@ inserted_count = 0
 neg_votes_omitted_count = 0
 existing_omitted_count = 0
 
+# Obtener la fecha actual
+current_date = datetime.now().date()
+
 for question in questions:
     id_discussion = question["question_id"]
 
@@ -74,22 +78,27 @@ for question in questions:
         existing_omitted_count += 1
         continue
 
-    topic = params["intitle"]
-    title = question["title"]
-    link = question["link"]
-    score = question["score"]
-    answer_count = question["answer_count"]
-    view_count = question["view_count"]
-    creation_date = datetime.fromtimestamp(question["creation_date"]).strftime("%Y-%m-%d")
-    tags = ", ".join(question["tags"])
+    creation_date = datetime.fromtimestamp(question["creation_date"])
 
-    if score >= 0:
-        insert_query = "INSERT INTO BPM_PC_QUERY (id_discussion,topic, title, link, score, answer_count, view_count, creation_date, tags) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        cursor.execute(insert_query, (id_discussion, topic, title, link, score, answer_count, view_count, creation_date, tags))
-        inserted_count += 1
-        existing_ids.add(id_discussion)
+    # Verificar si la fecha de creación está dentro del rango deseado
+    if datetime(2014,1,14) <= creation_date <= datetime.now():
+        title = question["title"]
+        link = question["link"]
+        score = question["score"]
+        answer_count = question["answer_count"]
+        view_count = question["view_count"]
+        tags = ", ".join(question["tags"])
+
+        if score >= 0:
+            insert_query = "INSERT INTO BPM_PC_QUERY (id_discussion, title, link, score, answer_count, view_count, creation_date, tags) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+            cursor.execute(insert_query, (id_discussion, title, link, score, answer_count, view_count, creation_date, tags))
+            inserted_count += 1
+            existing_ids.add(id_discussion)
+        else:
+            neg_votes_omitted_count += 1
     else:
-        neg_votes_omitted_count += 1
+        # La pregunta no está dentro del rango deseado, se omite
+        existing_omitted_count += 1
 
 # Confirma los cambios en la base de datos
 conn.commit()
