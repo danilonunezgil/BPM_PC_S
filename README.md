@@ -1,8 +1,8 @@
 # INFORMACIÓN DEL PROGRAMA
-Nombre: BPM_PC_QUERY<br>
-Descripción: obtiene discusiones de StackOverflow sobre cualquier tema.<br>
-Desarrollado por: DANNO_NZ<br>
-https://stackapps.com/apps/oauth/view/26090
+***Nombre:*** STACK_QUERY<br>
+***Descripción:*** programa que obtiene discusiones de StackOverflow sobre cualquier tema realizando unas validaciones puntuales de acuerdo a los requerimientos.<br>
+***Desarrollado por:*** DANNO_NZ<br>
+***API:*** https://stackapps.com/apps/oauth/view/26090
 
 # Para ejecutar el programa se necesita:
 
@@ -35,7 +35,12 @@ https://stackapps.com/apps/oauth/view/26090
    
 11. Ejecuta el programa mediante la siguiente instrucción en la terminal:
 
-   python BPM_PC_QUERY.py -k <keyAPI> -i <NombreBusqueda> -d <NombreBD> -u <postgres> -p <claveDB> 
+   ![Comando para ejecutar el programa](./comando_ejecucion.png)
+   Ejemplo: <br>python BPM_PC_QUERY.py -k "ABCDEF12" -i "camunda" -d "STACK_QUERY" -u "admin" -p "12345"
+
+12. Si no hay errores, los datos serán guardados descartando aquellas discusiones que tengan votos negativos (menores que cero). El programa realiza una validación de la existencia de una discusión y la omite si esta ya se encuentra en la base de datos. Para verificar los datos ejecute la sentencia SQL en pgAdmin 4:
+
+SELECT * FROM DB_name WHERE title ILIKE '%search_name%';
 
 # Resumen del Desarrollo: 
 El presente programa encarga de utilizar una API de StackOverflow para obtener preguntas relacionadas a un título de búsqueda especificado. Luego, almacena estas preguntas en una base de datos local utilizando PostgreSQL. El programa verifica si cada pregunta ya existe en la base de datos y, si no es así y tiene un puntaje mayor o igual a cero, la inserta. Al final, se muestran estadísticas sobre el número de preguntas encontradas, insertadas, omitidas por votos negativos y omitidas por existir previamente en la base de datos.
@@ -60,7 +65,7 @@ https://api.stackexchange.com/docs/throttle<br>
 Máximo 30 peticiones por segundo<br>
 Máximo 10.000 peticiones por día<br>
 En caso de superar la máximas por día, saldrá un error HTTP 429.<br>
-Se renueva cada media noche dado el caso se haya superado el límite diario.
+Dado el caso se haya superado el límite diario de peticiones al servidor se renovarán las 10.000 peticiones a partir de la media noche siguiente.
 
 # Mejoras futuras:
 Implementar una base de datos en la nube.<br>
