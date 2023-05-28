@@ -64,4 +64,4 @@ Se renueva cada media noche dado el caso se haya superado el límite diario.
 
 # Mejoras futuras:
 Implementar una base de datos en la nube.<br>
-Actualización registro a registro o registro puntual<br>
+Actualización registro a registro o registro puntual.<br>
