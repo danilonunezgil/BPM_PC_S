@@ -4,7 +4,6 @@ import time
 import psycopg2
 from datetime import datetime
 
-
 # Crear el objeto ArgumentParser
 parser = argparse.ArgumentParser(description='Obtener y almacenar preguntas de StackOverflow')
 
@@ -14,6 +13,7 @@ parser.add_argument('-i', '--intitle', required=True, help='Título de búsqueda
 parser.add_argument('-d', '--database', required=True, help='Nombre de la base de datos')
 parser.add_argument('-u', '--user', required=True, help='Usuario de la base de datos')
 parser.add_argument('-p', '--password', required=True, help='Contraseña de la base de datos')
+parser.add_argument('-f', '--fecha-superior', required=True, help='Fecha superior para filtrar las discusiones')
 
 # Parsear los argumentos de la línea de comandos
 args = parser.parse_args()
@@ -70,6 +70,9 @@ existing_omitted_count = 0
 # Obtener la fecha actual
 current_date = datetime.now().date()
 
+# Obtén la fecha superior del argumento y conviértela a un objeto de fecha
+fecha_superior = datetime.strptime(args.fecha_superior, '%d-%m-%Y').date()
+
 for question in questions:
     id_discussion = question["question_id"]
 
@@ -81,7 +84,7 @@ for question in questions:
     creation_date = datetime.fromtimestamp(question["creation_date"])
 
     # Verificar si la fecha de creación está dentro del rango deseado
-    if datetime(2014,1,14) <= creation_date <= datetime.now():
+    if datetime(2014, 1, 14) <= creation_date <= fecha_superior:
         title = question["title"]
         link = question["link"]
         score = question["score"]
