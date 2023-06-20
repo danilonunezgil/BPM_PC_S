@@ -9,10 +9,10 @@
 1. Realizar el registro en https://stackapps.com/users/login
 2. Registrar la aplicación para obtener las credenciales que permiten usar la API de StackOverflow https://stackapps.com/apps/oauth/register
 3. Obtener un cliente ID y una clave secreta de autenticación OAuth en Stack Overflow (si ya la tiene omita los pasos 1,2,3)
-3. Instalar un editor de código, recomendado Visual Studio Code: 
+3. Instalar un editor de código, recomendado Visual Studio Code (VSCODE): https://code.visualstudio.com/download
 4. Instalar el manejador de versiones GIT https://git-scm.com/downloads 
-5. Clonar el repositorio con: git clone https://github.com/danilonunezgil/BPM_PC_S.git
-6. Instalar Python en cualquier versión https://www.python.org/downloads/
+5. Clonar el repositorio con el comando: git clone https://github.com/danilonunezgil/BPM_PC_S.git
+6. Instalar Python en cualquier versión https://www.python.org/downloads/ o instalar la extensión a VSCODE
 7. Instalar los siguientes módulos:
 
    pip install requests (para hacer solicitudes HTTP)<br>
