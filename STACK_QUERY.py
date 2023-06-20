@@ -67,11 +67,8 @@ inserted_count = 0
 neg_votes_omitted_count = 0
 existing_omitted_count = 0
 
-# Obtener la fecha actual
-current_date = datetime.now().date()
-
-# Obtén la fecha superior del argumento y conviértela a un objeto de fecha
-fecha_superior = datetime.strptime(args.fecha_superior, '%d-%m-%Y').date()
+# Obtén la fecha superior del argumento y conviértela a un objeto de datetime
+fecha_superior = datetime.strptime(args.fecha_superior, '%d-%m-%Y')
 
 for question in questions:
     id_discussion = question["question_id"]
