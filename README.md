@@ -6,9 +6,9 @@
 
 # Para ejecutar el programa se necesita:
 
-1. Realizar el registro en https://stackapps.com/users/login
-2. Registrar la aplicación para obtener las credenciales que permiten usar la API de StackOverflow https://stackapps.com/apps/oauth/register
-3. Obtener un cliente ID y una clave secreta de autenticación OAuth en Stack Overflow (si ya la tiene omita los pasos 1,2,3)
+1. Realizar el registro en https://stackapps.com/users/login (si ya tiene la API omita este paso)
+2. Registrar la aplicación para obtener las credenciales que permiten usar la API de StackOverflow https://stackapps.com/apps/oauth/register (si ya tiene la API omita este paso)
+3. Obtener un cliente ID y una clave secreta de autenticación OAuth en Stack Overflow (si ya tiene la API omita este paso)
 3. Instalar un editor de código, recomendado Visual Studio Code (VSCODE): https://code.visualstudio.com/download
 4. Instalar el manejador de versiones GIT https://git-scm.com/downloads 
 5. Clonar el repositorio con el comando: git clone https://github.com/danilonunezgil/BPM_PC_S.git
@@ -19,7 +19,7 @@
    pip install psycopg2-binary (para conectarse y realizar operaciones con PostgreSQL)
    
 8. Instalar PostgreSQL https://www.postgresql.org/download/windows/ (versión estable o última versión)
-9. Con la ayuda de pgAdmin 4, crear una base de datos llamada BPM_PC_QUERY
+9. Con la ayuda de pgAdmin 4, crear una base de datos llamada BPM_PC_QUERY 
 10. En esa misma BD, mediante el uso del script llamado BPM_PC_Query.sql crear la siguiente tabla:
    
    CREATE TABLE BPM_PC_QUERY (<br>
@@ -37,7 +37,7 @@
 11. Ejecuta el programa mediante la siguiente instrucción en la terminal:
 
    ![Comando para ejecutar el programa](./comando_ejecucion.png)
-   Ejemplo: <br>python BPM_PC_QUERY.py -k "ABCDEF12" -i "camunda" -d "STACK_QUERY" -u "admin" -p "12345"
+   Ejemplo: <br>python BPM_PC_QUERY.py -k "ABCDEF12" -i "camunda" -d "STACK_QUERY" -u "admin" -p "12345" -f DD-MM-YYYY
 
 12. Si no hay errores, los datos serán guardados descartando aquellas discusiones que tengan votos negativos (menores que cero). El programa realiza una validación de la existencia de una discusión y la omite si esta ya se encuentra en la base de datos. Para verificar los datos ejecute la sentencia SQL en pgAdmin 4:
 
