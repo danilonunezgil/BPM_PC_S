@@ -6,7 +6,7 @@
 
 # Para ejecutar el programa se necesita:
 
-1. Realizar el registro en https://stackapps.com/users/login (si ya tiene la API omita este paso)
+1. Realizar el registro en https://stackapps.com/users/login (si ya tiene la API omita este paso).
 2. Registrar la aplicación para obtener las credenciales que permiten usar la API de StackOverflow https://stackapps.com/apps/oauth/register (si ya tiene la API omita este paso)
 3. Obtener un cliente ID y una clave secreta de autenticación OAuth en Stack Overflow (si ya tiene la API omita este paso)
 3. Instalar un editor de código, recomendado Visual Studio Code (VSCODE): https://code.visualstudio.com/download
