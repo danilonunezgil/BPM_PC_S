@@ -1,8 +1,9 @@
 import argparse
+import csv
 import requests
 import time
-import psycopg2
 from datetime import datetime
+import os
 
 # Crear el objeto ArgumentParser
 parser = argparse.ArgumentParser(description='Obtener y almacenar preguntas de StackOverflow')
@@ -10,25 +11,11 @@ parser = argparse.ArgumentParser(description='Obtener y almacenar preguntas de S
 # Agregar los argumentos
 parser.add_argument('-k', '--key', required=True, help='Clave de la API de StackExchange')
 parser.add_argument('-i', '--intitle', required=True, help='Título de búsqueda en StackOverflow')
-parser.add_argument('-d', '--database', required=True, help='Nombre de la base de datos')
-parser.add_argument('-u', '--user', required=True, help='Usuario de la base de datos')
-parser.add_argument('-p', '--password', required=True, help='Contraseña de la base de datos')
-parser.add_argument('-f', '--fecha-superior', required=True, help='Fecha superior para filtrar las discusiones')
+parser.add_argument('-s', '--fecha-superior', required=True, help='Fecha superior para filtrar las discusiones')
+parser.add_argument('-d', '--directory', required=True, help='Directorio para guardar los archivos CSV')
 
 # Parsear los argumentos de la línea de comandos
 args = parser.parse_args()
-
-# Define los parámetros de conexión a la base de datos
-conn_params = {
-    "host": "localhost",
-    "database": args.database,
-    "user": args.user,
-    "password": args.password
-}
-
-# Establece una conexión con la base de datos
-conn = psycopg2.connect(**conn_params)
-cursor = conn.cursor()
 
 url = "https://api.stackexchange.com/2.3/search"
 
@@ -38,77 +25,97 @@ params = {
     "intitle": args.intitle,
 }
 
-questions = []
+csv_rows = []
+existing_ids = set()    
 
-page = 1
-while True:
-    params["page"] = page
-    response = requests.get(url, params=params)
-    if response.status_code == 200:
-        data = response.json()
-        questions.extend(data["items"])
-        has_more = data["has_more"]
-        if not has_more:
-            break
-        page += 1
-        if page % 30 == 0:
-            print("esperando")
-            time.sleep(1)  # Espera 1 segundo después de cada 30 solicitudes
-    else:
-        print("Error al realizar la solicitud HTTP:", response.status_code)
-        break
+filename_with_extension = os.path.join(args.directory, f"{args.intitle}.csv")
 
-# Consulta los IDs de discusión existentes en la base de datos
-select_query = "SELECT id_discussion FROM STACK_QUERY"
-cursor.execute(select_query)
-existing_ids = set(row[0] for row in cursor.fetchall())
+existing_info_count = 0  # Almacena la cantidad de información existente en el archivo
 
-inserted_count = 0
-neg_votes_omitted_count = 0
-existing_omitted_count = 0
+if os.path.isfile(filename_with_extension):
+    # Cargar los IDs de discusión existentes del archivo CSV
+    with open(filename_with_extension, 'r', newline='', encoding='utf-8') as csvfile:
+        reader = csv.reader(csvfile)
+        existing_ids = set(row[0] for row in reader)
+        existing_info_count = len(existing_ids)
+else:
+    # El archivo no existe, crearlo y escribir el encabezado
+    with open(filename_with_extension, 'w', newline='', encoding='utf-8') as csvfile:
+        fieldnames = ['id_discussion', 'title', 'link', 'score', 'answer_count', 'view_count', 'creation_date', 'tags']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
 
-# Obtén la fecha superior del argumento y conviértela a un objeto de datetime
-fecha_superior = datetime.strptime(args.fecha_superior, '%d-%m-%Y')
+with open(filename_with_extension, 'a', newline='', encoding='utf-8') as csvfile:
+    fieldnames = ['id_discussion', 'title', 'link', 'score', 'answer_count', 'view_count', 'creation_date', 'tags']
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
-for question in questions:
-    id_discussion = question["question_id"]
+    page = 1
+    inserted_count = 0
+    neg_votes_omitted_count = 0
+    existing_omitted_count = 0
 
-    # Verifica si el ID de discusión ya existe en la base de datos
-    if id_discussion in existing_ids:
-        existing_omitted_count += 1
-        continue
+    fecha_superior = datetime.strptime(args.fecha_superior, '%d-%m-%Y')
 
-    creation_date = datetime.fromtimestamp(question["creation_date"])
+    while True:
+        params["page"] = page
+        response = requests.get(url, params=params)
+        if response.status_code == 200:
+            data = response.json()
+            questions = data["items"]
 
-    # Verificar si la fecha de creación está dentro del rango deseado
-    if datetime(2014, 1, 14) <= creation_date <= fecha_superior:
-        title = question["title"]
-        link = question["link"]
-        score = question["score"]
-        answer_count = question["answer_count"]
-        view_count = question["view_count"]
-        tags = ", ".join(question["tags"])
+            for question in questions:
+                id_discussion = str(question["question_id"])
+                creation_date = datetime.fromtimestamp(question["creation_date"])
 
-        if score >= 0:
-            insert_query = "INSERT INTO STACK_QUERY(id_discussion, title, link, score, answer_count, view_count, creation_date, tags) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-            cursor.execute(insert_query, (id_discussion, title, link, score, answer_count, view_count, creation_date, tags))
-            inserted_count += 1
-            existing_ids.add(id_discussion)
+                # Verificar si la fecha de creación está dentro del rango deseado
+                if datetime(2014, 1, 14) <= creation_date <= fecha_superior:
+                    if id_discussion not in existing_ids:
+                        title = question["title"]
+                        link = question["link"]
+                        score = question["score"]
+                        answer_count = question["answer_count"]
+                        view_count = question["view_count"]
+                        tags = ", ".join(question["tags"])
+
+                        csv_row = {
+                            'id_discussion': id_discussion,
+                            'title': title,
+                            'link': link,
+                            'score': score,
+                            'answer_count': answer_count,
+                            'view_count': view_count,
+                            'creation_date': creation_date.strftime('%Y-%m-%d %H:%M:%S'),
+                            'tags': tags
+                        }
+                        csv_rows.append(csv_row)
+                        inserted_count += 1
+                        existing_ids.add(id_discussion)
+                    else:
+                        existing_omitted_count += 1
+                else:
+                    neg_votes_omitted_count += 1
+
+            if not data["has_more"]:
+                break
+
+            page += 1
+            if page % 30 == 0:
+                print("Esperando")
+                time.sleep(1)  # Espera 1 segundo después de cada 30 solicitudes
         else:
-            neg_votes_omitted_count += 1
-    else:
-        # La pregunta no está dentro del rango deseado, se omite
-        existing_omitted_count += 1
+            print("Error al realizar la solicitud HTTP:", response.status_code)
+            break
 
-# Confirma los cambios en la base de datos
-conn.commit()
+    writer.writerows(csv_rows)
 
-# Cierra la conexión con la base de datos
-cursor.close()
-conn.close()
+new_info_count = len(csv_rows)  # Almacena la cantidad de información anexada
 
-total_questions = len(questions)
+difference = new_info_count - existing_info_count  # Calcula la diferencia entre la información existente y la anexada
+
+total_questions = inserted_count + neg_votes_omitted_count
+total_omitted = neg_votes_omitted_count
+
 print("Total discusiones encontradas: ", total_questions)
-print("Total discusiones insertadas en BD: ", inserted_count)
-print("Total discusiones omitidas por votos negativos: ", neg_votes_omitted_count)
-print("Total discusiones omitidas porque ya existían en la base de datos: ", existing_omitted_count)
+print("Total discusiones insertadas al CSV: ", inserted_count)
+print("Total discusiones omitidas por votos negativos de la actual consulta: ", neg_votes_omitted_count)
+print("Cantidad de información previa: ", existing_info_count)
